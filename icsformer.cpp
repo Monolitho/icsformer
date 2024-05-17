@@ -53,14 +53,14 @@ std::ostream& operator<<(std::ostream& os, const Course& myevent) {
   os << "BEGIN:VEVENT" << "\n"
      << "SUMMARY:" << myevent.Name << "\n"
      << "LOCATION:" << myevent.Place << "\n"
-     << "DTSTART:" << formatTimeUTC(myevent.Start) << "\n"
-     << "DTEND:" << formatTimeUTC(myevent.End) << "\n"
+     << "DTSTART;TZID=Asia/Shanghai:" << formatTimeUTC(myevent.Start) << "\n"
+     << "DTEND;TZID=Asia/Shanghai:" << formatTimeUTC(myevent.End) << "\n"
      << "RRULE:" << "FREQ=WEEKLY;" << (myevent.isBiweekly ? "INTERVAL=2;" : "")
      << "BYDAY=" << weekdayRule(myevent.WeekdayCode) << ";UNTIL="
      << formatTimeUTC(
             addDaysToTm(myevent.End, 7 * (myevent.EndWeek - myevent.StartWeek)))
      << "\n"
-     << "END:VEVENT " << "\n ";
+     << "END:VEVENT" << "\n";
   return os;
 }
 vector<Course> ReadRecord(stringstream& fin, int startdate, char& weeklyMap) {
@@ -278,8 +278,10 @@ vector<Course> ReadRecord(stringstream& fin, int startdate, char& weeklyMap) {
   }
   for (int i = 0; i < 8; i++) {
     if (EvenDayMap & 1 << i) {
+      if (startweek % 2 == 0) startweek++;
       multiStartTime[1] = addDaysToTm(courseStartTime, startweek * 7 + i);
       multiEndTime[1] = addDaysToTm(courseEndTime, startweek * 7 + i);
+      if (startweek % 2 == 1) startweek--;
       break;  // It stops when it finds the first day that have classes.
     }
   }
@@ -338,6 +340,17 @@ int main() {
   ifstream fin("Calendar.icsconfig");
   ofstream fout("Calendar.ics");
   fout << "BEGIN:VCALENDAR" << endl;
+  fout << "BEGIN:VTIMEZONE\n\
+TZID:Asia/Shanghai\n\
+BEGIN:STANDARD\n\
+DTSTART:19700101T000000\n\
+TZOFFSETFROM:+0800\n\
+TZOFFSETTO:+0800\n\
+TZNAME:CST\n\
+END:STANDARD\n\
+END:VTIMEZONE\n\
+";
+
   fin >> startdate;
   fin.ignore();
   char weeklyCode = 0;
