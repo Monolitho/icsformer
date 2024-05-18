@@ -20,7 +20,7 @@ struct Course {
 };
 std::string formatTimeUTC(const std::tm& time) {
   std::ostringstream oss;
-  oss << std::put_time(&time, "%Y%m%dT%H%M%SZ");
+  oss << std::put_time(&time, "%Y%m%dT%H%M%S");
   return oss.str();
 }
 string weekdayRule(char weekdayMap) {
