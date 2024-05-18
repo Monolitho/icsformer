@@ -1,3 +1,4 @@
+#include <algorithm>
 #include <cstdio>
 #include <ctime>
 #include <fstream>
@@ -88,7 +89,11 @@ vector<Course> ReadRecord(stringstream& fin, int startdate, char& weeklyMap) {
 
   while (strin >> currentWeekday) {
     int weekday = 0;
-    if (currentWeekday.find("MO") != -1) {
+    vector<string> weekDayNames = {"MO", "TU", "WE", "TH", "FR", "SA", "SU"};
+    weekday = std::find(weekDayNames.begin(), weekDayNames.end(),
+                        currentWeekday.substr(0, 2)) -
+              weekDayNames.begin();
+    /*if (currentWeekday.find("MO") != -1) {
       weekday = 1;
     }
     if (currentWeekday.find("TU") != -1) {
@@ -108,7 +113,12 @@ vector<Course> ReadRecord(stringstream& fin, int startdate, char& weeklyMap) {
     }
     if (currentWeekday.find("SU") != -1) {
       weekday = 7;
+    }*/
+    if (weekday == 7) {
+      cerr << "Invalid input. Program Terminated." << endl;
+      exit(1);
     }
+    weekday++;
     if (currentWeekday.find('^') != -1) {
       EvenDayMap |= 1 << (weekday - 1);
     } else if (currentWeekday.find('*') != -1) {
@@ -129,128 +139,18 @@ vector<Course> ReadRecord(stringstream& fin, int startdate, char& weeklyMap) {
     courseEndTime.tm_min = 0;
   } else {
     sscanf(coursehour.c_str(), "%d-%d", &startclass, &endclass);
-    switch (startclass) {
-      case 1:
-        courseStartTime.tm_hour = 8;
-        courseStartTime.tm_min = 0;
-        break;
-      case 2:
-        courseStartTime.tm_hour = 8;
-        courseStartTime.tm_min = 55;
-        break;
-      case 3:
-        courseStartTime.tm_hour = 10;
-        courseStartTime.tm_min = 0;
-        break;
-      case 4:
-        courseStartTime.tm_hour = 10;
-        courseStartTime.tm_min = 55;
-        break;
-      case 5:
-        courseStartTime.tm_hour = 12;
-        courseStartTime.tm_min = 0;
-        break;
-      case 6:
-        courseStartTime.tm_hour = 12;
-        courseStartTime.tm_min = 55;
-        break;
-      case 7:
-        courseStartTime.tm_hour = 14;
-        courseStartTime.tm_min = 00;
-        break;
-      case 8:
-        courseStartTime.tm_hour = 14;
-        courseStartTime.tm_min = 55;
-        break;
-      case 9:
-        courseStartTime.tm_hour = 16;
-        courseStartTime.tm_min = 0;
-        break;
-      case 10:
-        courseStartTime.tm_hour = 16;
-        courseStartTime.tm_min = 55;
-        break;
-      case 11:
-        courseStartTime.tm_hour = 18;
-        courseStartTime.tm_min = 0;
-        break;
-      case 12:
-        courseStartTime.tm_hour = 18;
-        courseStartTime.tm_min = 55;
-        break;
-      case 13:
-        courseStartTime.tm_hour = 20;
-        courseStartTime.tm_min = 0;
-        break;
-      case 14:
-        courseStartTime.tm_hour = 20;
-        courseStartTime.tm_min = 55;
-        break;
-      default:
-        cout << "Input Error." << endl;
-        exit(1);
-    }
-    switch (endclass) {
-      case 1:
-        courseEndTime.tm_hour = 8;
-        courseEndTime.tm_min = 45;
-        break;
-      case 2:
-        courseEndTime.tm_hour = 9;
-        courseEndTime.tm_min = 40;
-        break;
-      case 3:
-        courseEndTime.tm_hour = 10;
-        courseEndTime.tm_min = 45;
-        break;
-      case 4:
-        courseEndTime.tm_hour = 11;
-        courseEndTime.tm_min = 40;
-        break;
-      case 5:
-        courseEndTime.tm_hour = 12;
-        courseEndTime.tm_min = 45;
-        break;
-      case 6:
-        courseEndTime.tm_hour = 13;
-        courseEndTime.tm_min = 40;
-        break;
-      case 7:
-        courseEndTime.tm_hour = 14;
-        courseEndTime.tm_min = 45;
-        break;
-      case 8:
-        courseEndTime.tm_hour = 15;
-        courseEndTime.tm_min = 40;
-        break;
-      case 9:
-        courseEndTime.tm_hour = 16;
-        courseEndTime.tm_min = 45;
-        break;
-      case 10:
-        courseEndTime.tm_hour = 17;
-        courseEndTime.tm_min = 40;
-        break;
-      case 11:
-        courseEndTime.tm_hour = 18;
-        courseEndTime.tm_min = 45;
-        break;
-      case 12:
-        courseEndTime.tm_hour = 19;
-        courseEndTime.tm_min = 40;
-        break;
-      case 13:
-        courseEndTime.tm_hour = 20;
-        courseEndTime.tm_min = 45;
-        break;
-      case 14:
-        courseEndTime.tm_hour = 21;
-        courseEndTime.tm_min = 40;
-        break;
-      default:
-        cout << "Input Error." << endl;
-        exit(1);
-    }
+    int startTimeHourArray[15] = {0,  8,  8,  10, 10, 12, 12, 14,
+                                  14, 16, 16, 18, 18, 20, 20};
+    int startTimeMinuteArray[15] = {0, 0,  55, 0,  55, 0,  55,
+                                    0, 55, 0,  55, 0,  55, 0};
+    int endTimeHourArray[15] = {0,  8,  9,  10, 11, 12, 13, 14,
+                                15, 16, 17, 18, 19, 20, 21};
+    int endTimeMinuteArray[15] = {0,  45, 40, 45, 40, 45, 40, 45,
+                                  40, 45, 40, 45, 40, 45, 40};
+    courseStartTime.tm_hour = startTimeHourArray[startclass];
+    courseStartTime.tm_min = startTimeMinuteArray[startclass];
+    courseEndTime.tm_hour = endTimeHourArray[endclass];
+    courseEndTime.tm_min = endTimeMinuteArray[endclass];
   }
   if (WeeklyDayMap) {
     weeklyMap |= 1;
