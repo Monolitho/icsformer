@@ -12,7 +12,7 @@ For Windows users, use
 g++ ./icsformer.cpp -o icsformer.exe -std=c++11
 ```
 ### Usage
-To use the project, simply create a Calendar.icsconfig file (**notice the capitalized letter!**) in the same folder as the executeable file and write in the course.
+To use the project, simply create a Calendar.icsconfig file (**notice the capitalized letter!**) in the same folder as the executeable file and write in the course. After finish the file, run the executable and collect the .ics file it created.
 The files start with a date of the beginning day of the semester (**Must be Monday!**) in *YYYYMMDD* format. It is followed by the course 
 Each of the course should be written in a line, with the following fields provided.
 #### Name of the course
