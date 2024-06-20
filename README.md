@@ -36,4 +36,6 @@ For example, If the course is on Mondays and Thursdays, and is held on Fridays o
  You can find a useable complete Calendar.icsconfig file in this repo.
  ### Feedbacks
  The author's email is DannyWenjueZhang@gmail.com. Feel free to report any issues, advice or bug feedbacks to it. :\)
+ ### AI usage claim
+ ChatGPT3.5 is used to generate the ics output part.
 
